@@ -1,4 +1,4 @@
-import { getDummyMessage } from '../service/dummyService.js';
+import { getDummyMessage } from '../services/dummyService.js';
 
 export const dummyTask = async (req, res, next) => {
     try {
