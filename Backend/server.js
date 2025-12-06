@@ -5,6 +5,8 @@ import express from 'express';
 import dummyRoute from './routes/dummyRoute.js'
 import sequelize from './config/sequelizeConfig.js';
 import cors from 'cors';
+import categoryRoute from './routes/categoryRoute.js';
+import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
 
@@ -30,6 +32,9 @@ sequelize.authenticate()
   });
 
 app.use('/', dummyRoute);
+app.use('/categories', categoryRoute);
+
+app.use(errorHandler);
 
 // app.listen(5000, () => {
 //     console.log('Server is running on port 5000');
