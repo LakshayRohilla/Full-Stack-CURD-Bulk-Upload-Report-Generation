@@ -1,5 +1,5 @@
 import express from 'express';
-import dummyTask from '../controllers/dummyContoller.js'
+import { dummyTask } from '../controllers/dummyContoller.js'
 
 const router = express.Router();
 
