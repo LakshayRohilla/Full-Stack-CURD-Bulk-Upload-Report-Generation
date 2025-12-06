@@ -1,5 +1,10 @@
-const dummyTask = async (req, res, next) => {
-    res.json({message:"Its working fine"});
-}
+import { getDummyMessage } from '../service/dummyService.js';
 
-export default dummyTask;
+export const dummyTask = async (req, res, next) => {
+    try {
+        const result = await getDummyMessage();
+        res.json(result);
+    } catch (error) {
+        next(error); // Pass error to Express error handler
+    }
+};
