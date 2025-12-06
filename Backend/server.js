@@ -1,7 +1,17 @@
 import express from 'express';
 import dummyRoute from './routes/dummyRoute.js'
+import dotenv from 'dotenv';
+import cors from 'cors';
 
 const app = express();
+dotenv.config();
+
+app.use(cors({
+    origin: ['http://localhost:3000', 'https://yourdomain.com'], 
+    credentials: true,
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'PUT'],
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
+  }));
 
 app.use('/', dummyRoute);
 
