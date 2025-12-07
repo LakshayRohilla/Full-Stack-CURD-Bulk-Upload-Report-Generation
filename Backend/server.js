@@ -8,8 +8,13 @@ import cors from 'cors';
 import categoryRoute from './routes/categoryRoute.js';
 import errorHandler from './middleware/errorHandler.js';
 import userRoute from './routes/userRoute.js';
+import { setupAssociations } from './models/associations.js';
+import productRoute from './routes/productRoute.js';
 
 const app = express();
+
+// Set up model associations here — before DB connection
+setupAssociations();
 
 app.use(cors({
     origin: ['http://localhost:3000', 'https://yourdomain.com'], 
@@ -19,7 +24,7 @@ app.use(cors({
   }));
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // optional if you expect form-encoded bodies
+app.use(express.urlencoded({ extended: true }));
 
 sequelize.authenticate()
   .then(() => {
@@ -35,6 +40,7 @@ sequelize.authenticate()
 app.use('/', dummyRoute);
 app.use('/categories', categoryRoute);
 app.use('/users', userRoute);
+app.use('/products', productRoute);
 
 app.use(errorHandler);
 
