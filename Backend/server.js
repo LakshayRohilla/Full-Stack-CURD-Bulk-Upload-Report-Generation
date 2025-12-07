@@ -7,6 +7,7 @@ import sequelize from './config/sequelizeConfig.js';
 import cors from 'cors';
 import categoryRoute from './routes/categoryRoute.js';
 import errorHandler from './middleware/errorHandler.js';
+import userRoute from './routes/userRoute.js';
 
 const app = express();
 
@@ -33,6 +34,7 @@ sequelize.authenticate()
 
 app.use('/', dummyRoute);
 app.use('/categories', categoryRoute);
+app.use('/users', userRoute);
 
 app.use(errorHandler);
 
