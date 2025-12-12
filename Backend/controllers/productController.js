@@ -61,3 +61,20 @@ export const deleteProduct = async (req, res, next) => {
     next(error);
   }
 };
+
+// POST /products/bulk-upload
+export const bulkUploadProducts = async (req, res, next) => {
+  try {
+    if (!req.file || !req.file.buffer) {
+      throw new AppError(400, 'No file uploaded');
+    }
+    // req.file.buffer passed to service
+    const result = await productService.bulkCreateFromExcel(req.file.buffer);
+    res.status(200).json(result);
+  } catch (error) {
+    if (!(error instanceof AppError)) {
+      error = new AppError(500, `Bulk upload failed: ${error.message}`);
+    }
+    next(error);
+  }
+};
