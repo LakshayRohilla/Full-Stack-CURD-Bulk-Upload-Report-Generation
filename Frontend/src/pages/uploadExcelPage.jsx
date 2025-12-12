@@ -1,5 +1,5 @@
 import ProductBulkUpload from "../components/product/productBulkUpload";
-import UploadButton from "../components/Shared/UI/UploadButton";
+import MiniDrawer from "../components/Shared/UI/navBar";
 
 const UploadExcelPage = () => {
     return (
@@ -7,6 +7,7 @@ const UploadExcelPage = () => {
         {/* <Navbar/> */}
         {/* <p>Please upload excel sheet for bulk upload</p>
         <UploadButton/> */}
+        <MiniDrawer/>
         <ProductBulkUpload/>
         {/* <Footer/> */}
         </>
