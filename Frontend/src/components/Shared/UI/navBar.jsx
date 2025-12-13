@@ -1,26 +1,8 @@
 import React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import UserIcon from '@mui/icons-material/RecentActors';
-import ProductIcon from '@mui/icons-material/ShoppingBag';
-import CategoryIcon from '@mui/icons-material/AutoAwesomeMotion';
-import ReportIcon from '@mui/icons-material/Assessment';
-import UploadIcon from '@mui/icons-material/Upload';
+import { Box, Drawer as MuiDrawer, AppBar as MuiAppBar, Toolbar, List, CssBaseline, Typography, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Menu as MenuIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, RecentActors as UserIcon, ShoppingBag as ProductIcon, AutoAwesomeMotion as CategoryIcon, Assessment as ReportIcon, Upload as UploadIcon } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -119,7 +101,7 @@ export default function MiniDrawer() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component={Link} to='/' sx={{ color: 'inherit', textDecoration: 'none' }}>
             Full Stack(PERN) : CRUD | Bulk Upload | Generate Report 
           </Typography>
         </Toolbar>
@@ -136,8 +118,9 @@ export default function MiniDrawer() {
         <List>
             {['User', 'Category', 'Product'].map((text, index) => {
                 const IconComp = mainIcons[index]; 
+                const whereTo = `/${text.toLowerCase()}`;
                 return (
-                <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+                <ListItem key={text} disablePadding sx={{ display: 'block', color: 'inherit', textDecoration: 'none'}} component={Link} to={whereTo}>
                     <ListItemButton
                     sx={[
                         { minHeight: 48, px: 2.5 },
@@ -163,8 +146,12 @@ export default function MiniDrawer() {
         <List>
           {['Bulk Upload', 'Report Generation'].map((text, index) => {
             const IconComp = secondaryIcons[index]; 
+            const whereTo = '/' + text.split(' ').map((word, index) => {
+                    return index === 0 ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+                }).join(''); 
+
             return (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+            <ListItem key={text} disablePadding sx={{ display: 'block', color: 'inherit', textDecoration: 'none' }} component={Link} to={whereTo}>
               <ListItemButton
                 sx={[
                   { minHeight: 48, px: 2.5 },
@@ -192,10 +179,6 @@ export default function MiniDrawer() {
 
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        <Typography sx={{ marginBottom: 2 }} variant='h3'>
-          Welcome to the application
-        </Typography>
-        
       </Box>
     </Box>
   );
