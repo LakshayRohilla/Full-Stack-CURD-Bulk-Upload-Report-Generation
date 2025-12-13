@@ -21,6 +21,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         method: 'GET',
       }),
       providesTags: ['Products'],
+      keepUnusedDataFor: 100
     }),
   }),
 });

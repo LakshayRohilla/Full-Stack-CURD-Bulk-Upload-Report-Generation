@@ -18,7 +18,7 @@ export const createProduct = async (name, price, categoryId) => {
 };
 
 export const getAllProducts = async () => {
-  return Product.findAll({ order: [['id', 'ASC']] });
+  return Product.findAll({ order: [['id', 'DESC']] });
 };
 
 export const getProductById = async (id) => {

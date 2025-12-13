@@ -20,7 +20,10 @@ export const createUser = async (email, password) => {
 };
 
 export const getAllUsers = async () => {
-  const users = await User.findAll({ attributes: ['id', 'email'], order: [['id','ASC']] });
+  const users = await User.findAll({
+    attributes: { exclude: ['password'] },
+    order: [['id', 'DESC']],
+  });
   return users;
 };
 

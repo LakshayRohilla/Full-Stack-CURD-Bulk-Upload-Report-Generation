@@ -1,5 +1,5 @@
 import ProductBulkUpload from "../components/product/productBulkUpload";
-import MiniDrawer from "../components/Shared/UI/navBar";
+import MiniDrawer from "../components/Shared/navBar";
 
 const UploadExcelPage = () => {
     return (

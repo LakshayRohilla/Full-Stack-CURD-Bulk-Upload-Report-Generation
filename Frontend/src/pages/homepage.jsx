@@ -1,4 +1,4 @@
-import MiniDrawer from "../components/Shared/UI/navBar";
+import MiniDrawer from "../components/Shared/navBar";
 import { Typography } from "@mui/material";
 
 const HomePage = () => {
