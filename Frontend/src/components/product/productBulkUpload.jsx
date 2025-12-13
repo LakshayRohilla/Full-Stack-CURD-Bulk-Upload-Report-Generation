@@ -1,7 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useBulkUploadProductsMutation } from '../../store/slice/productApiSlice';
-import { Button, LinearProgress, Typography, Box } from '@mui/material';
+import { Button, LinearProgress, Typography, Box, Paper } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import bulkUploadTemplateFile from '../../assets/bulk_upload_template.xlsx';
 
 export default function ProductBulkUpload() {
   const [file, setFile] = useState(null);
@@ -11,7 +13,6 @@ export default function ProductBulkUpload() {
 
   const [bulkUpload, { isLoading }] = useBulkUploadProductsMutation();
 
-  // Handle file select
   const handleFileChange = (e) => {
     setResult(null);
     setErrorMessage(null);
@@ -19,19 +20,16 @@ export default function ProductBulkUpload() {
     setFile(f || null);
   };
 
-  // Handle upload action
   const handleUpload = async () => {
     if (!file) {
       setErrorMessage('Please select an Excel file first.');
       return;
     }
-
     try {
       const res = await bulkUpload(file).unwrap();
       setResult(res);
-      setFile(null); // reset file state
-      document.getElementById('bulk-file').value = ''; // clear input value
-      // auto scroll to results
+      setFile(null);
+      document.getElementById('bulk-file').value = '';
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
@@ -40,105 +38,126 @@ export default function ProductBulkUpload() {
     }
   };
 
+  const handleTemplateDownload = () => {
+    window.location.href = bulkUploadTemplateFile;
+  };
+
   return (
-    <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4 }}>
-      <Typography variant="h6" gutterBottom>
-        Bulk Upload Products (Excel)
-      </Typography>
+    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 5, px: 2 }}>
+      {/* Row above the card: title (left) and template download (right) */}
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+          📦 Bulk Upload Products (Excel)
+        </Typography>
 
-      {/* Hidden file input */}
-      <input
-        accept=".xlsx,.xls"
-        id="bulk-file"
-        type="file"
-        style={{ display: 'none' }}
-        onChange={handleFileChange}
-      />
-
-      {/* File select button */}
-      <label htmlFor="bulk-file">
         <Button
           variant="outlined"
-          component="span"
-          startIcon={<UploadFileIcon />}
-          sx={{ mb: 2 }}
+          color="primary"
+          startIcon={<FileDownloadIcon />}
+          onClick={handleTemplateDownload}
         >
-          Select Excel File
+          Download Excel Template
         </Button>
-      </label>
+      </Box>
 
-      {/* Show selected file name */}
-      {file && (
-        <Typography variant="body2" sx={{ mt: 1 }}>
-          Selected File: {file.name}
-        </Typography>
-      )}
+      <Paper elevation={3} sx={{ p: 4 }}>
+        {/* Hidden file input */}
+        <input
+          accept=".xlsx,.xls"
+          id="bulk-file"
+          type="file"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
 
-      {/* Loading indicator */}
-      {isLoading && <LinearProgress sx={{ mb: 2 }} />}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2, mb: 2 }}>
+          <label htmlFor="bulk-file" style={{ margin: 0 }}>
+            <Button
+              variant="contained"
+              component="span"
+              startIcon={<UploadFileIcon />}
+            >
+              Select Excel File
+            </Button>
+          </label>
 
-      {/* Upload results */}
-      {result && (
-        <Box
-          ref={resultRef}
-          sx={{
-            mt: 2,
-            p: 2,
-            border: '1px solid green',
-            backgroundColor: '#e0f2e9',
-          }}
-        >
-          <Typography variant="body1" color="green">
-            Success: {result.successCount} products created.
-          </Typography>
-          <Typography variant="body2" color='black'>
-            Total Rows Processed: {result.total}
-          </Typography>
-
-          {result.failedCount > 0 && (
-            <>
-              <Typography variant="body2" color="error">
-                {result.failedCount} rows failed:
-              </Typography>
-              <ul>
-                {result.errors.map((err, i) => (
-                  <li key={i}>
-                    <Typography variant="body2" color="error">
-                      Row {err.row}: {err.reason}
-                    </Typography>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleUpload}
+            disabled={isLoading || !file}
+          >
+            Start Upload
+          </Button>
         </Box>
-      )}
 
-      {/* Error messages */}
-      {errorMessage && (
-        <Box
-          sx={{
-            mt: 2,
-            p: 2,
-            border: '1px solid red',
-            backgroundColor: '#f8d7da',
-          }}
-        >
-          <Typography variant="body1" color="error">
-            {errorMessage}
+        {file && (
+          <Typography variant="body2" sx={{ mt: 1, mb: 2, fontStyle: 'italic' }}>
+            Selected File: {file.name}
           </Typography>
-        </Box>
-      )}
+        )}
 
-      {/* Upload button */}
-      <Button
-        variant="contained"
-        onClick={handleUpload}
-        disabled={isLoading || !file} // disable if loading or no file selected
-        sx={{ mt: 2 }}
-      >
-        Start Upload
-      </Button>
+        {isLoading && <LinearProgress sx={{ mb: 2 }} />}
+
+        {/* Result Section */}
+        {result && (
+          <Box
+            ref={resultRef}
+            sx={{
+              mt: 2,
+              p: 2,
+              border: '2px solid green',
+              backgroundColor: '#e6f4ea',
+              borderRadius: 1
+            }}
+          >
+            <Typography variant="subtitle1" color="green" fontWeight="bold">
+              ✅ Upload Successful
+            </Typography>
+            <Typography variant="body1">
+              {result.successCount} products created.
+            </Typography>
+            <Typography variant="body2">
+              Total Rows Processed: {result.total}
+            </Typography>
+
+            {result.failedCount > 0 && (
+              <>
+                <Typography variant="body2" color="error" mt={1}>
+                  ❌ {result.failedCount} rows failed:
+                </Typography>
+                <ul style={{ marginTop: '0.5rem' }}>
+                  {result.errors.map((err, i) => (
+                    <li key={i}>
+                      <Typography variant="body2" color="error">
+                        Row {err.row}: {err.reason}
+                      </Typography>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </Box>
+        )}
+
+        {/* Error Section */}
+        {errorMessage && (
+          <Box
+            sx={{
+              mt: 2,
+              p: 2,
+              border: '2px solid red',
+              backgroundColor: '#fdecea',
+              borderRadius: 1
+            }}
+          >
+            <Typography variant="subtitle1" color="error" fontWeight="bold">
+              ⚠️ Error
+            </Typography>
+            <Typography variant="body2">{errorMessage}</Typography>
+          </Box>
+        )}
+      </Paper>
     </Box>
   );
 }
