@@ -1,14 +1,17 @@
-import logo from './logo.svg';
 import './App.css';
-import UploadExcelPage from './pages/uploadExcelPage';
 import HomePage from './pages/homepage';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import UploadExcelPage from './pages/uploadExcelPage';
 
 function App() {
   return (
     <div className="App">
-        {/* <UploadExcelPage/> */} 
-        {/* Will uncomment the above line once we have the route setup */}
-        <HomePage/>
+      <BrowserRouter>
+        <Routes>
+          <Route path="*" element={<HomePage/>} />
+          <Route path="/bulkUpload" element={<UploadExcelPage/>} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
