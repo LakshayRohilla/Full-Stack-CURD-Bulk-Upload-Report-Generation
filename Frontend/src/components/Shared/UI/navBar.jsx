@@ -71,7 +71,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const mainIcons  = [UserIcon, ProductIcon, CategoryIcon];
-const secondaryIcons = [ReportIcon, UploadIcon];
+const secondaryIcons = [UploadIcon, ReportIcon];
 
 export default function MiniDrawer() {
   const theme = useTheme();
