@@ -15,7 +15,7 @@ export const createCategory = async (name) => {
 };
 
 export const getAllCategories = async () => {
-  return Category.findAll({ order: [['id', 'ASC']] });
+  return Category.findAll({ order: [['id', 'DESC']] });
 };
 
 export const getCategoryById = async (id) => {
