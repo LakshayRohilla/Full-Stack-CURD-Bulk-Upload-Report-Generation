@@ -9,14 +9,27 @@ export const userApiSlice = apiSlice.injectEndpoints({
       keepUnusedDataFor: 100,
     }),
     createUser: builder.mutation({
-      query: (user) => ({
-        url: USER_URL,
-        method: 'POST',
-        body: user,
+      query: (user) => ({ url: USER_URL, method: 'POST', body: user }),
+      invalidatesTags: ['Users'],
+    }),
+    updateUser: builder.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `${USER_URL}/${id}`,
+        method: 'PUT',
+        body: patch,
       }),
+      invalidatesTags: ['Users'],
+    }),
+    deleteUser: builder.mutation({
+      query: (id) => ({ url: `${USER_URL}/${id}`, method: 'DELETE' }),
       invalidatesTags: ['Users'],
     }),
   }),
 });
 
-export const { useGetUsersQuery, useCreateUserMutation } = userApiSlice;
+export const {
+  useGetUsersQuery,
+  useCreateUserMutation,
+  useUpdateUserMutation,
+  useDeleteUserMutation,
+} = userApiSlice;

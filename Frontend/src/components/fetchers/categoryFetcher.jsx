@@ -1,10 +1,16 @@
-import { useGetCategoriesQuery } from '../../store/slice/categoryApiSlice';
+import {
+  useGetCategoriesQuery,
+  useDeleteCategoryMutation
+} from '../../store/slice/categoryApiSlice';
 import CenteralizedTable from '../Shared/UI/centeralizedTable';
 import { CircularProgress, Box } from '@mui/material';
 import AlertMessage from '../Shared/UI/alertMessage';
+import { useNavigate } from 'react-router-dom';
 
 export default function CategoryFetcher() {
   const { data, error, isLoading } = useGetCategoriesQuery();
+  const [deleteCategory] = useDeleteCategoryMutation();
+  const navigate = useNavigate();
 
   const categories = Array.isArray(data?.categories) ? data.categories : [];
 
@@ -22,14 +28,14 @@ export default function CategoryFetcher() {
     updatedAt: new Date(c.updatedAt).toLocaleString(),
   }));
 
-  const handleEdit = (id) => {
-    console.log(`Edit category with id: ${id}`);
-    // TODO: implement edit logic
+  const handleEdit = async (id) => {
+    navigate(`/category/edit/${id}`);
   };
 
-  const handleDelete = (ids) => {
-    console.log(`Delete categories with ids:`, ids);
-    // TODO: implement delete logic
+  const handleDelete = async (ids) => {
+    for (const id of ids) {
+      await deleteCategory(id).unwrap();
+    }
   };
 
   if (isLoading) {
@@ -43,7 +49,7 @@ export default function CategoryFetcher() {
   if (error) {
     return (
       <Box>
-        <AlertMessage msg="Unable to fetch the categories!!" />
+        <AlertMessage msg="Unable to fetch categories!" />
       </Box>
     );
   }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -11,42 +11,79 @@ import {
   InputLabel,
   FormControl,
 } from '@mui/material';
-import { useCreateProductMutation } from '../../store/slice/productApiSlice';
+import {
+  useCreateProductMutation,
+  useUpdateProductMutation,
+} from '../../store/slice/productApiSlice';
 import { useGetCategoriesQuery } from '../../store/slice/categoryApiSlice';
 import AlertMessage from '../Shared/UI/alertMessage';
 import SuccessMessage from '../Shared/UI/successMessage';
 import { useNavigate } from 'react-router-dom';
 
-export default function ProductForm() {
+export default function ProductForm({ product }) {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [categoryId, setCategoryId] = useState('');
+
   const { data, isLoading: catsLoading, error: catsError } = useGetCategoriesQuery();
   const categories = Array.isArray(data?.categories) ? data.categories : [];
+
+  const [
+    createProduct,
+    { isLoading: isCreating, isError: isCreateError, error: createError, isSuccess: isCreateSuccess },
+  ] = useCreateProductMutation();
+  const [
+    updateProduct,
+    { isLoading: isUpdating, isError: isUpdateError, error: updateError, isSuccess: isUpdateSuccess },
+  ] = useUpdateProductMutation();
+
   const navigate = useNavigate();
 
-  const [createProduct, { isLoading, isError, error, isSuccess }] = useCreateProductMutation();
+  useEffect(() => {
+    if (product) {
+      setName(product.name || '');
+      setPrice(product.price?.toString() || '');
+      setCategoryId(product.categoryId ? String(product.categoryId) : '');
+    }
+  }, [product]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    await createProduct({ name, price: Number(price), categoryId: Number(categoryId) });
-    if (!error) {
+  useEffect(() => {
+    if (isCreateSuccess || isUpdateSuccess) {
       setName('');
       setPrice('');
       setCategoryId('');
+      navigate('/product');
     }
-    setTimeout(() => {
-        navigate('/product')
-    }, 500);
+  }, [isCreateSuccess, isUpdateSuccess, navigate]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      name,
+      price: Number(price),
+      categoryId: Number(categoryId), 
+    };
+
+    if (product) {
+      await updateProduct({ id: product.id, ...payload }).unwrap();
+    } else {
+      await createProduct(payload).unwrap();
+    }
   };
 
   return (
     <Paper sx={{ p: 3, maxWidth: 500, mx: 'auto', mt: 4 }}>
-      <Typography variant="h4" sx={{fontWeight:'bold'}} gutterBottom>Create Product</Typography>
+      <Typography variant="h4" sx={{ fontWeight: 'bold' }} gutterBottom>
+        {product ? 'Edit Product' : 'Create Product'}
+      </Typography>
 
       {catsError && <AlertMessage msg="Unable to load categories" />}
-      {isError && <AlertMessage msg={error?.data?.message || 'Failed to create product'} />}
-      {isSuccess && <SuccessMessage msg="Product created successfully!" severity="success" />}
+      {(isCreateError || isUpdateError) && (
+        <AlertMessage msg={(createError || updateError)?.data?.message || 'Failed to save product'} />
+      )}
+      {(isCreateSuccess || isUpdateSuccess) && (
+        <SuccessMessage msg="Product saved successfully!" severity="success" />
+      )}
 
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'grid', gap: 2 }}>
         <TextField
@@ -75,7 +112,7 @@ export default function ProductForm() {
               <MenuItem disabled>Loading...</MenuItem>
             ) : (
               categories.map((c) => (
-                <MenuItem key={c.id} value={c.id}>
+                <MenuItem key={c.id} value={String(c.id)}>
                   {c.name}
                 </MenuItem>
               ))
@@ -83,8 +120,10 @@ export default function ProductForm() {
           </Select>
         </FormControl>
 
-        <Button type="submit" variant="contained" disabled={isLoading}>
-          {isLoading ? <CircularProgress size={24} /> : 'Create Product'}
+        <Button type="submit" variant="contained" disabled={isCreating || isUpdating}>
+          {(isCreating || isUpdating) ? (
+            <CircularProgress size={24} />
+          ) : product ? 'Update Product' : 'Create Product'}
         </Button>
       </Box>
     </Paper>

@@ -1,31 +1,33 @@
-import React, { useState } from 'react';
-import { Box, TextField, Button, Paper, Typography, CircularProgress } from '@mui/material';
-import { useCreateCategoryMutation } from '../../store/slice/categoryApiSlice';
-import AlertMessage from '../Shared/UI/alertMessage';
-import SuccessMessage from '../Shared/UI/successMessage';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCreateCategoryMutation, useUpdateCategoryMutation } from '../../store/slice/categoryApiSlice';
+import { Box, TextField, Button, Paper, Typography } from '@mui/material';
 
-export default function CategoryForm() {
-  const [name, setName] = useState('');
-  const [createCategory, { isLoading, isError, error, isSuccess }] = useCreateCategoryMutation();
+const CategoryForm = ({ category }) => {
+  const [name, setName] = useState(category ? category.name : '');
   const navigate = useNavigate();
+  const [createCategory, { isSuccess: isCreateSuccess }] = useCreateCategoryMutation();
+  const [updateCategory, { isSuccess: isUpdateSuccess }] = useUpdateCategoryMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await createCategory({ name });
-    if (!error) {
-      setName('');
+    if (category) {
+      await updateCategory({ id: category.id, name }).unwrap();
+    } else {
+      await createCategory({ name }).unwrap();
     }
-    setTimeout(() => {
-        navigate('/category')
-    }, 500);
+    navigate('/category'); 
   };
 
+  useEffect(() => {
+    if (isCreateSuccess || isUpdateSuccess) {
+      setName('');
+    }
+  }, [isCreateSuccess, isUpdateSuccess]);
+
   return (
-    <Paper sx={{ p: 3, maxWidth: 400, mx: 'auto', mt: 4 }}>
-      <Typography variant="h4" sx={{fontWeight:'bold'}} gutterBottom>Create Category</Typography>
-      {isError && <AlertMessage msg={error?.data?.message || 'Failed to create category'} />}
-      {isSuccess && <SuccessMessage msg="Category created successfully!" severity="success" />}
+    <Paper sx={{ p: 3, maxWidth: 400, mx: 'auto' }}>
+      <Typography variant="h6" gutterBottom>{category ? "Edit Category" : "Create Category"}</Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'grid', gap: 2 }}>
         <TextField
           label="Name"
@@ -33,10 +35,12 @@ export default function CategoryForm() {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <Button type="submit" variant="contained" disabled={isLoading}>
-          {isLoading ? <CircularProgress size={24} /> : 'Create Category'}
+        <Button type="submit" variant="contained">
+          {category ? "Update Category" : "Create Category"}
         </Button>
       </Box>
     </Paper>
   );
-}
+};
+
+export default CategoryForm;
