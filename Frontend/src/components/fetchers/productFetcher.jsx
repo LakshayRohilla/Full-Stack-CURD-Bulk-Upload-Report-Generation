@@ -1,13 +1,18 @@
-import { useGetProductsQuery } from '../../store/slice/productApiSlice';
+import {
+  useGetProductsQuery,
+  useDeleteProductMutation
+} from '../../store/slice/productApiSlice';
 import CenteralizedTable from '../Shared/UI/centeralizedTable';
-import { CircularProgress, Box} from '@mui/material';
+import { CircularProgress, Box } from '@mui/material';
 import AlertMessage from '../Shared/UI/alertMessage';
+import { useNavigate } from 'react-router-dom';
 
 export default function ProductFetcher() {
   const { data, error, isLoading } = useGetProductsQuery();
+  const [deleteProduct] = useDeleteProductMutation();
+  const navigate = useNavigate();
 
   const products = Array.isArray(data?.products) ? data.products : [];
-
 
   const columns = [
     { id: 'id', label: 'ID', numeric: true },
@@ -29,14 +34,14 @@ export default function ProductFetcher() {
     updatedAt: new Date(p.updatedAt).toLocaleString(),
   }));
 
-  const handleEdit = (id) => {
-    console.log(`Edit product with id: ${id}`);
-    // TODO: implement modal or navigation
+  const handleEdit = async (id) => {
+    navigate(`/product/edit/${id}`);
   };
 
-  const handleDelete = (ids) => {
-    console.log(`Delete products with ids:`, ids);
-    // TODO: implement delete API call and refetch
+  const handleDelete = async (ids) => {
+    for (const id of ids) {
+      await deleteProduct(id).unwrap();
+    }
   };
 
   if (isLoading) {
@@ -49,14 +54,15 @@ export default function ProductFetcher() {
 
   if (error) {
     return (
-        <Box>
-            <AlertMessage msg={"Unable to fetch the products !!"}/>
-        </Box>
+      <Box>
+        <AlertMessage msg="Unable to fetch the products!!" />
+      </Box>
     );
   }
 
   return (
     <CenteralizedTable
+      title="Products"
       columns={columns}
       rows={rows}
       onEdit={handleEdit}

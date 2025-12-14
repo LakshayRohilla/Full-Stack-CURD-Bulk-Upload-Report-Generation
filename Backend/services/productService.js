@@ -28,18 +28,19 @@ export const getProductById = async (id) => {
 };
 
 export const updateProduct = async (id, payload) => {
-  const { name, price, categoryId, category } = payload;
+  const { name, price, categoryId } = payload;
   const product = await Product.findByPk(id);
   if (!product) throw new AppError(404, 'Product not found.');
 
   if (name !== undefined) product.name = name;
   if (price !== undefined) product.price = price;
+
   if (categoryId !== undefined) {
     const cat = await Category.findByPk(categoryId);
     if (!cat) throw new AppError(400, 'Invalid categoryId.');
     product.categoryId = categoryId;
+    product.category   = cat.name;       
   }
-  if (category !== undefined) product.category = category;
 
   await product.save();
   return product;

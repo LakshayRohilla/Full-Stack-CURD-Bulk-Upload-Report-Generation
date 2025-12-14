@@ -9,14 +9,27 @@ export const categoryApiSlice = apiSlice.injectEndpoints({
       keepUnusedDataFor: 100,
     }),
     createCategory: builder.mutation({
-      query: (cat) => ({
-        url: CATEGORY_URL,
-        method: 'POST',
-        body: cat,
+      query: (cat) => ({ url: CATEGORY_URL, method: 'POST', body: cat }),
+      invalidatesTags: ['Categories'],
+    }),
+    updateCategory: builder.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `${CATEGORY_URL}/${id}`,
+        method: 'PUT',
+        body: patch,
       }),
+      invalidatesTags: ['Categories'],
+    }),
+    deleteCategory: builder.mutation({
+      query: (id) => ({ url: `${CATEGORY_URL}/${id}`, method: 'DELETE' }),
       invalidatesTags: ['Categories'],
     }),
   }),
 });
 
-export const { useGetCategoriesQuery, useCreateCategoryMutation } = categoryApiSlice;
+export const {
+  useGetCategoriesQuery,
+  useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
+} = categoryApiSlice;

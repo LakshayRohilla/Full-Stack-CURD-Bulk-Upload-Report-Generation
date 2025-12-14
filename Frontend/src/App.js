@@ -9,6 +9,9 @@ import AddCategoryFormPage from './pages/formPages/addCategoryFormPage';
 import AddProductFormPage from './pages/formPages/addProductFormPage';
 import AddUserFormPage from './pages/formPages/addUserFormPage';
 import ErrorPage from './pages/errorPage';
+import EditCategoryPage from './pages/editFormPages/editCategoryPage';
+import EditProductPage from './pages/editFormPages/editProductPage';
+import EditUserPage from './pages/editFormPages/editUserPage';
 
 function App() {
   return (
@@ -24,6 +27,10 @@ function App() {
           <Route path="/createCategory" element={<AddCategoryFormPage/>} />
           <Route path="/createProduct" element={<AddProductFormPage/>} />
           <Route path="/createUser" element={<AddUserFormPage/>} />
+          {/* Edit Forms */}
+          <Route path="/category/edit/:id" element={<EditCategoryPage />} />
+          <Route path="/product/edit/:id" element={<EditProductPage />} />
+          <Route path="/user/edit/:id" element={<EditUserPage />} />
           {/* No Page */}
           <Route path="*" element={<ErrorPage/>} />
         </Routes>
