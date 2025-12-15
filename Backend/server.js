@@ -10,6 +10,7 @@ import errorHandler from './middleware/errorHandler.js';
 import userRoute from './routes/userRoute.js';
 import { setupAssociations } from './models/associations.js';
 import productRoute from './routes/productRoute.js';
+import reportRoute from './routes/reportRoute.js';
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use('/', dummyRoute);
 app.use('/categories', categoryRoute);
 app.use('/users', userRoute);
 app.use('/products', productRoute);
+app.use('/reports', reportRoute);
 
 app.use(errorHandler);
 

@@ -12,6 +12,8 @@ import ErrorPage from './pages/errorPage';
 import EditCategoryPage from './pages/editFormPages/editCategoryPage';
 import EditProductPage from './pages/editFormPages/editProductPage';
 import EditUserPage from './pages/editFormPages/editUserPage';
+import ReportFormPage from './pages/formPages/reportFormPage';
+import ReportDisplayPage from './pages/reportPages/reportDisplayPage';
 
 function App() {
   return (
@@ -33,6 +35,9 @@ function App() {
           <Route path="/user/edit/:id" element={<EditUserPage />} />
           {/* No Page */}
           <Route path="*" element={<ErrorPage/>} />
+          {/* Reports */}
+          <Route path="/reportGeneration" element={<ReportFormPage />} /> 
+          <Route path="/reports/display" element={<ReportDisplayPage />} /> 
         </Routes>
       </BrowserRouter>
     </div>
