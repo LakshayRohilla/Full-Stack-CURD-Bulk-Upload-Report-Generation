@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Box,
   Paper,
@@ -145,6 +145,12 @@ export default function CenteralizedTable({ title, columns, rows, onEdit, onDele
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [dense, setDense] = useState(false);
+
+  const rowIds = useMemo(() => rows.map(r => r.id), [rows]);
+
+  useEffect(() => {
+    setSelected(prev => prev.filter(id => rowIds.includes(id)));
+  }, [rowIds]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
